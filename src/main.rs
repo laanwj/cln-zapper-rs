@@ -177,6 +177,10 @@ async fn invoice_stream(
                 let invoice: WaitanyinvoiceResponse = match invoice_res {
                     Ok(invoice) => invoice,
                     Err(e) => {
+                        if e.code == None {
+                            info!("RPC disconnected: exiting plugin");
+                            break None;
+                        }
                         warn!("Error fetching invoice: {e}");
                         // Let's not spam CLN with requests on failure
                         tokio::time::sleep(Duration::from_secs(1)).await;
